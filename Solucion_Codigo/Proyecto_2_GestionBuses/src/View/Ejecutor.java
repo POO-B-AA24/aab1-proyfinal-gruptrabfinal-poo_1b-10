@@ -1,91 +1,62 @@
 package View;
 
-import java.io.*;
+import Controller.Data_Base;
+import Controller.Servicio_Buses;
 import java.util.Scanner;
 
 public class Ejecutor {
 
-    private static SistemaDeGestionDeAutobuses sistema = new SistemaDeGestionDeAutobuses();
-    private static Scanner scanner = new Scanner(System.in);
-
     public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
         int opcion;
+
         do {
-            mostrarMenu();
-            opcion = Integer.parseInt(scanner.nextLine());
+            
+            System.out.println("Sistema de Gestión de Autobuses UTPL:");
+            System.out.println("1. Mostrar rutas de buses");
+            System.out.println("2. Agregar nueva ruta de bus");
+            System.out.println("3. Eliminar ruta de bus");
+            System.out.println("4. Salir");
+            System.out.print("Seleccione una opción: ");
+            opcion = scanner.nextInt();
+            scanner.nextLine(); 
+
             switch (opcion) {
                 case 1:
-                    mostrarLineasDeAutobus();
+                    Data_Base.informacionRutas();
                     break;
                 case 2:
-                    guardarDatos();
+                    System.out.print("¿Es una ruta que no empieza en el campus de la UTPL? (true/false): ");
+                    boolean ruta_fuera_del_Campus = scanner.nextBoolean();
+                    scanner.nextLine(); 
+                    System.out.print("Número de ruta: ");
+                    int numero = scanner.nextInt();
+                    scanner.nextLine(); 
+                    System.out.print("Ruta: ");
+                    String ruta = scanner.nextLine();
+                    System.out.print("Hora de salida (HH:MM): ");
+                    String horaSalida = scanner.nextLine();
+                    System.out.print("Hora de fin (HH:MM): ");
+                    String horaFin = scanner.nextLine();
+
+                    Servicio_Buses.agregarRuta(ruta_fuera_del_Campus, numero, ruta, horaSalida, horaFin);
                     break;
                 case 3:
-                    cargarDatos();
+                    System.out.print("¿Es una ruta que empieza fuera del Campus de la UTPL? (true/false): ");
+                    ruta_fuera_del_Campus = scanner.nextBoolean();
+                    System.out.print("ID de la ruta a eliminar: ");
+                    int id = scanner.nextInt();
+
+                    Servicio_Buses.eliminarRuta(ruta_fuera_del_Campus, id);
                     break;
                 case 4:
-                    System.out.println("Saliendo del sistema...");
+                    System.out.println("Finalizando programa...");
                     break;
                 default:
-                    System.out.println("Opción no válida. Intente nuevamente.");
+                    System.out.println("Opción no válida.");
             }
         } while (opcion != 4);
-    }
 
-    private static void mostrarMenu() {
-        System.out.println("Sistema de Gestión de Autobuses UTPL");
-        System.out.println("1. Mostrar líneas de autobús");
-        System.out.println("2. Guardar datos");
-        System.out.println("3. Cargar datos");
-        System.out.println("4. Salir");
-        System.out.print("Seleccione una opción: ");
-    }
-
-    private static void mostrarLineasDeAutobus() {
-        System.out.print("Nombre del archivo a mostrar: ");
-        String archivo = scanner.nextLine();
-        try {
-            BufferedReader br = new BufferedReader(new FileReader(archivo));
-            String linea;
-            while ((linea = br.readLine()) != null) {
-                System.out.println(linea);
-            }
-            br.close();
-        } catch (IOException e) {
-            System.err.println("Error al leer el archivo: " + e.getMessage());
-        }
-    }
-
-    private static void guardarDatos() {
-        System.out.print("Nombre del archivo para guardar: ");
-        String archivo = scanner.nextLine();
-        try {
-            sistema.guardarDatos(archivo);
-            System.out.println("Datos guardados correctamente.");
-        } catch (IOException e) {
-            System.err.println("Error al guardar los datos: " + e.getMessage());
-        }
-    }
-
-    private static void cargarDatos() {
-        System.out.print("Nombre del archivo a cargar: ");
-        String archivo = scanner.nextLine();
-        try {
-            sistema.cargarDatos(archivo);
-            System.out.println("Datos cargados correctamente.");
-        } catch (IOException | ClassNotFoundException e) {
-            System.err.println("Error al cargar los datos: " + e.getMessage());
-        }
-    }
-}
-
-class SistemaDeGestionDeAutobuses {
-
-    public void guardarDatos(String archivo) throws IOException {
-        // Implementación del método para guardar datos
-    }
-
-    public void cargarDatos(String archivo) throws IOException, ClassNotFoundException {
-        // Implementación del método para cargar datos
+        scanner.close();
     }
 }
